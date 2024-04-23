@@ -1,4 +1,3 @@
 .idea/
-docs/
 *.sqlite3
 db/
