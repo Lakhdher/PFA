@@ -1,12 +1,10 @@
 from langchain.chains.history_aware_retriever import create_history_aware_retriever
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
-from app.models import gemini
-from app.RAG.retrieval.multiquery import retrieval_chain_multiquery
 
-contextualize_q_system_prompt = """ Compte tenu de l'historique des discussions et de la dernière question de l'utilisateur \
-qui peut faire référence à un contexte dans l'historique de la discussion, formuler quelques phrase autonome \
-qui peut récapituler l'historique de la discussion. Prenez en compte que vous êtes toujours en Tunisie.\
-Ne PAS répondre à la question,juste la reformuler si nécessaire et sinon la renvoyer telle quelle."""
+from app.RAG.retrieval.multiquery import retrieval_chain_multiquery
+from app.RAG.utils.prompts import contextualize_q_system_prompt
+from app.models import gemini
+
 contextualize_q_prompt = ChatPromptTemplate.from_messages(
     [
         ("system", contextualize_q_system_prompt),

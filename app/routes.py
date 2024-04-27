@@ -1,29 +1,41 @@
 import asyncio
 
-from flask import render_template, request, abort  # Import necessary modules
-from app import app
-from app.RAG.generation.q_a import stream_response, get_response
-from app.RAG.utils.utils import to_markdown, markdown_to_html
+from flask import request  # Import necessary modules
+
+from app import app, socketio
+from app.RAG.generation.q_a import get_response, get_stream_response
 
 
-@app.route('/stream_qa', methods=['POST'])
-def multiquery():
-    question = request.json['question']
-    token = request.json['token']
+@socketio.on('connect')
+def handle_connect():
+    print('Client connected')
+
+    def listen_for_question():
+        @socketio.on('question')
+        def handle_question(question):
+            print('Question received:', question)
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+            try:
+                loop.run_until_complete(get_stream_response(question))
+            finally:
+                loop.close()
+
+    socketio.start_background_task(listen_for_question)
 
 
-@app.route('/full_qa',methods=['POST'])
+@app.route('/full_qa', methods=['POST'])
 def full_qa():
     final_answer = []
     question = request.json['question']
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
     try:
-        answer, metadata = loop.run_until_complete(get_response(question))
+        answer, metadata, docs = loop.run_until_complete(get_response(question))
         final_answer = ' '.join(answer)
     finally:
         loop.close()
-    return final_answer
+    return {'answer': final_answer, 'metadata': metadata, 'docs': docs}
 
 
 @app.route('/')
