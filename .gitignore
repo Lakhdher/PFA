@@ -3,6 +3,7 @@
 db/
 .env
 __pycache__/
+*.pyc
 /app/RAG/generation/__pycache__/
 /app/RAG/utils/__pycache__/
 /app/RAG/retrieval/__pycache__/
