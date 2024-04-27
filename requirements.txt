@@ -1,0 +1,8 @@
+ipython~=8.24.0
+langchain~=0.1.16
+langchain-google-genai
+flask~=3.0.3
+flask_socketio
+MyApplication~=0.1.0
+python-dotenv~=1.0.1
+Markdown~=3.6
