@@ -7,4 +7,4 @@ __pycache__/
 /app/RAG/utils/__pycache__/
 /app/RAG/retrieval/__pycache__/
 venv/
-
+/app/static/docs/

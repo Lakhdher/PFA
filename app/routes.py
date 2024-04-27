@@ -31,11 +31,10 @@ def full_qa():
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
     try:
-        answer, metadata, docs = loop.run_until_complete(get_response(question))
-        final_answer = ' '.join(answer)
+        response, docs = loop.run_until_complete(get_response(question))
     finally:
         loop.close()
-    return {'answer': final_answer, 'metadata': metadata, 'docs': docs}
+    return {'answer': response['answer'].content, 'metadata': response['answer'].response_metadata, 'docs': docs}
 
 
 @app.route('/')

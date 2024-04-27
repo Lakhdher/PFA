@@ -47,14 +47,9 @@ async def async_generator_wrapper(sync_gen):
 
 
 async def get_response(question, chat_history=[], metadata=None):
-    answer = []
-    async for text in async_generator_wrapper(rag_chain.stream({"input": question, "chat_history": chat_history})):
-        if 'answer' in text:
-            answer.append(text['answer'].content)
-            print(text['answer'].content, flush=True)
-            metadata = text['answer'].response_metadata  # store the metadata
-            emit('response', {'data': text['answer'].content, 'metadata': metadata})
-    return answer, metadata
+    global docs
+    response = rag_chain.invoke({"input": question, "chat_history": chat_history})
+    return response, docs
 
 
 async def get_stream_response(question, chat_history=[]):
@@ -64,7 +59,6 @@ async def get_stream_response(question, chat_history=[]):
     async for text in async_generator_wrapper(rag_chain.stream({"input": question, "chat_history": chat_history})):
         if 'answer' in text:
             answer.append(text['answer'].content)
-            print(text['answer'].content, flush=True)
-            metadata = text['answer'].response_metadata
-            emit('stream_qa', {'data': text['answer'].content})
-    return answer, metadata, docs
+            metadata = text['answer'].response_metadata  # store the metadata
+            emit('response', {'data': text['answer'].content, 'metadata': metadata})
+    return answer, metadata
