@@ -1,15 +1,19 @@
 import asyncio
 
-from flask import request  # Import necessary modules
+from flask import request
+
 from app import app, socketio
 from app.RAG.generation.q_a import get_response, get_stream_response
 
 
 @socketio.on('connect')
 def handle_connect():
+    print('Client connected')
+
     def listen_for_question():
         @socketio.on('question')
         def handle_question(question):
+            print('Question received:', question)
             loop = asyncio.new_event_loop()
             asyncio.set_event_loop(loop)
             try:
@@ -27,11 +31,10 @@ def full_qa():
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
     try:
-        answer, metadata, docs = loop.run_until_complete(get_response(question))
-        final_answer = ' '.join(answer)
+        response, docs = loop.run_until_complete(get_response(question))
     finally:
         loop.close()
-    return {'answer': final_answer, 'metadata': metadata, 'docs': docs}
+    return {'answer': response['answer'].content, 'metadata': response['answer'].response_metadata, 'docs': docs}
 
 
 @app.route('/')

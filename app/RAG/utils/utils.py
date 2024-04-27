@@ -1,7 +1,8 @@
 import textwrap
+
+import markdown
 from IPython.display import Markdown
 from langchain.load import dumps, loads
-import markdown
 
 
 def get_unique_union(documents):

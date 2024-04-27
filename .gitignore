@@ -2,5 +2,9 @@
 *.sqlite3
 db/
 .env
+__pycache__/
+/app/RAG/generation/__pycache__/
+/app/RAG/utils/__pycache__/
+/app/RAG/retrieval/__pycache__/
 venv/
 app/docs
