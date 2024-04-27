@@ -1,6 +1,7 @@
 import textwrap
 from IPython.display import Markdown
 from langchain.load import dumps, loads
+import markdown
 
 
 def get_unique_union(documents):
@@ -32,3 +33,8 @@ def format_docs(docs):
 def to_markdown(text):
     text = text.replace('•', '  *')
     return Markdown(textwrap.indent(text, '> ', predicate=lambda _: True))
+
+
+def markdown_to_html(md_text):
+    html = markdown.markdown(md_text)
+    return html
