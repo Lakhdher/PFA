@@ -2,19 +2,20 @@ from operator import itemgetter
 
 from flask_socketio import emit
 from langchain.chains.retrieval import create_retrieval_chain
-from langchain_community.chat_message_histories.in_memory import ChatMessageHistory
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.runnables import RunnableParallel, RunnableLambda
 from langchain_core.runnables.history import RunnableWithMessageHistory
+from langchain_mongodb import MongoDBChatMessageHistory
 
 from app.RAG.generation.history import history_aware_retriever
 from app.RAG.utils.prompts import qa_system_prompt
-from app.RAG.utils.utils import chat_message_history_to_json, json_to_chat_message_history, async_generator_wrapper
-from app.config.mongoConfig import get_db
+from app.RAG.utils.utils import async_generator_wrapper
+from app.config.mongoConfig import get_mongo_uri, get_db_name, get_collection_name
 from app.models import gemini
 
-db_client = get_db()
-chat_history_collection = db_client['chat_history']
+db_uri = get_mongo_uri()
+db_name = get_db_name()
+collection_name = get_collection_name()
 
 qa_prompt = ChatPromptTemplate.from_messages(
     [
@@ -32,9 +33,6 @@ def save_docs(inputs):
     return docs
 
 
-# uncomment this chain to get safety ratings with the answer
-
-
 question_answer_chain = (
         RunnableParallel({
             'context': RunnableLambda(save_docs),
@@ -47,17 +45,9 @@ question_answer_chain = (
 
 rag_chain = create_retrieval_chain(history_aware_retriever, question_answer_chain)
 
-store = {}
 
-
-def get_session_history(session_id: str):
-    if chat_history_collection.count_documents({'session_id': session_id}) == 0:
-        store[session_id] = ChatMessageHistory()
-        chat_history_collection.insert_one(
-            {'session_id': session_id, 'history': chat_message_history_to_json(store[session_id])})
-    chat_history = chat_history_collection.find_one({'session_id': session_id})
-    store[session_id] = json_to_chat_message_history(chat_history['history'])
-    return store[session_id]
+def get_session_history(session_id: str) -> MongoDBChatMessageHistory:
+    return MongoDBChatMessageHistory(db_uri, session_id, database_name=db_name, collection_name=collection_name, )
 
 
 conversational_rag_chain = RunnableWithMessageHistory(
@@ -76,8 +66,6 @@ async def get_response(question, session_id):
                                                config={
                                                    "configurable": {"session_id": session_id, }
                                                })
-    list_to_persist = chat_message_history_to_json(store[session_id])
-    chat_history_collection.update_one({'session_id': session_id}, {'$set': {'history': list_to_persist}})
     return response, docs
 
 
@@ -92,6 +80,4 @@ async def get_stream_response(question, session_id):
             answer.append(text['answer'].content)
             metadata = text['answer'].response_metadata  # store the metadata
             emit('response', {'data': text['answer'].content, 'metadata': metadata})
-    list_to_persist = chat_message_history_to_json(store[session_id])
-    chat_history_collection.update_one({'session_id': session_id}, {'$set': {'history': list_to_persist}})
     return answer, metadata

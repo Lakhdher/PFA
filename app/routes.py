@@ -4,10 +4,6 @@ from flask import request  # Import session
 
 from app import app, socketio
 from app.RAG.generation.q_a import get_response, get_stream_response
-from app.config.mongoConfig import get_db
-
-db_client = get_db()
-chat_history_collection = db_client['chat_history']
 
 
 @socketio.on('connect')
@@ -24,6 +20,7 @@ def handle_connect():
                 loop.run_until_complete(get_stream_response(question, session_id=1))
             finally:
                 loop.close()
+
     socketio.start_background_task(listen_for_question)
 
 

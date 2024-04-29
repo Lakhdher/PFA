@@ -3,13 +3,6 @@ import textwrap
 import markdown
 from IPython.display import Markdown
 from langchain.load import dumps, loads
-from langchain_community.chat_message_histories.in_memory import ChatMessageHistory
-from langchain_core.chat_history import BaseChatMessageHistory
-from app.config.mongoConfig import get_db
-import json
-
-db_client = get_db()
-chat_history_collection = db_client['chat_history']
 
 
 def get_unique_union(documents):
@@ -38,19 +31,9 @@ def format_docs(docs):
     return "\n\n".join(doc.page_content for doc in docs)
 
 
-def chat_message_history_to_json(chat_object):
-    return [dumps(x) for x in chat_object.messages]
-
-
 async def async_generator_wrapper(sync_gen):
     for item in sync_gen:
         yield item
-
-
-def json_to_chat_message_history(list_of_messages):
-    if len(list_of_messages) == 0:
-        return ChatMessageHistory()
-    return ChatMessageHistory(messages=[loads(x) for x in list_of_messages])
 
 
 def to_markdown(text):
