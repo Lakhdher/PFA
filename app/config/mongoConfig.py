@@ -10,5 +10,5 @@ def get_db():
     port = os.getenv('PORT')
     db = os.getenv('DB_NAME')
     client = MongoClient(host, int(port))
-    db = client[db]
-    return db
+    db_client = client[db]
+    return db_client

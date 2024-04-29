@@ -5,10 +5,10 @@ En proposant plusieurs points de vue sur la question de l'utilisateur, votre obj
 est de l'aider à surmonter certaines limitations de la recherche de similarité basée sur la distance. 
 Fournissez ces questions alternatives séparées par des sauts de ligne. Question originale: {question}"""
 
-contextualize_q_system_prompt = """ Compte tenu de l'historique des discussions et de la dernière question de l'utilisateur \
-qui peut faire référence à un contexte dans l'historique de la discussion, formuler quelques phrase autonome \
-qui peut récapituler l'historique de la discussion. Prenez en compte que vous êtes toujours en Tunisie.\
-Ne PAS répondre à la question,juste la reformuler si nécessaire et sinon la renvoyer telle quelle."""
+contextualize_q_system_prompt = """Étant donné un historique de conversation et la dernière question de 
+l'utilisateur, qui peut faire référence au contexte de l'historique de conversation, formulez une question autonome 
+qui peut être comprise sans l'historique de conversation. Ne répondez pas à la question, reformulez-la si nécessaire, 
+sinon renvoyez-la telle quelle.."""
 
 qa_system_prompt = """ Tu es un assistant juridique spécialisé dans la loi en TUNISIE.
     Ta mission est de répondre aux questions des gens sur différents aspects juridiques ,en te limitant aux informations générales et en évitant les cas sensibles ou extrêmes.

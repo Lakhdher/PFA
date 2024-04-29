@@ -1,9 +1,13 @@
 import asyncio
 
-from flask import request  # Import necessary modules
+from flask import request  # Import session
 
 from app import app, socketio
 from app.RAG.generation.q_a import get_response, get_stream_response
+from app.config.mongoConfig import get_db
+
+db_client = get_db()
+chat_history_collection = db_client['chat_history']
 
 
 @socketio.on('connect')
@@ -12,26 +16,25 @@ def handle_connect():
 
     def listen_for_question():
         @socketio.on('question')
-        def handle_question(question):
+        def handle_question(question, session_id=1):
             print('Question received:', question)
             loop = asyncio.new_event_loop()
             asyncio.set_event_loop(loop)
             try:
-                loop.run_until_complete(get_stream_response(question))
+                loop.run_until_complete(get_stream_response(question, session_id=1))
             finally:
                 loop.close()
-
     socketio.start_background_task(listen_for_question)
 
 
 @app.route('/full_qa', methods=['POST'])
 def full_qa():
-    final_answer = []
     question = request.json['question']
+    print('Question received:', question)
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
     try:
-        response, docs = loop.run_until_complete(get_response(question))
+        response, docs = loop.run_until_complete(get_response(question, session_id=1))
     finally:
         loop.close()
     return {'answer': response['answer'].content, 'metadata': response['answer'].response_metadata, 'docs': docs}
