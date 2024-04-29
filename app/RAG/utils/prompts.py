@@ -8,7 +8,7 @@ Fournissez ces questions alternatives séparées par des sauts de ligne. Questio
 contextualize_q_system_prompt = """Étant donné un historique de conversation et la dernière question de 
 l'utilisateur, qui peut faire référence au contexte de l'historique de conversation, formulez une question autonome 
 qui peut être comprise sans l'historique de conversation. Ne répondez pas à la question, reformulez-la si nécessaire, 
-sinon renvoyez-la telle quelle.."""
+sinon renvoyez-la telle quelle.Ne renvoie qu'une question indépendante."""
 
 qa_system_prompt = """ Tu es un assistant juridique spécialisé dans la loi en TUNISIE.
     Ta mission est de répondre aux questions des gens sur différents aspects juridiques ,en te limitant aux informations générales et en évitant les cas sensibles ou extrêmes.
