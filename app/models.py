@@ -18,4 +18,4 @@ gemini_1 = ChatGoogleGenerativeAI(model="gemini-1.0-pro-latest", google_api_key=
 mistral = Ollama(model="mistral")
 # vectordb = PineconeVectorStore(index_name=os.getenv("INDEX_NAME"), embedding=embedder)
 vectordb = Chroma(persist_directory=persist_directory, embedding_function=embedder)
-retriever = vectordb.as_retriever()
+retriever = vectordb.as_retriever(kwargs={"k": 5})
