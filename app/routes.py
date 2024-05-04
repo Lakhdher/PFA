@@ -43,6 +43,6 @@ def get_history():
     user_id = request.args.get('user_id')
     db = get_db()
     collection = db[get_collection_name()]
-    query = {'SessionId':  [int(user_id),int (conversation_id)]}
+    query = {'SessionId':  [int(user_id),int(conversation_id)]}
     documents = collection.find(query)
-    return {'history':doc['History'] for doc in documents}
+    return [doc['History'] for doc in documents]

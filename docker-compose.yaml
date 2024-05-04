@@ -1,0 +1,37 @@
+version: "3.8"
+
+services:
+  chatbot:
+    build: .
+    ports:
+      - "5000:5000"
+    links:
+      - mongo
+      - ollama
+    depends_on:
+      - mongo
+      - ollama
+    restart: always
+    networks:
+      - app-network
+  mongo:
+    image: mongo:latest
+    environment:
+      - MONGO_INITDB_DATABASE=PFA
+    ports:
+      - "27017:27017"   
+    restart: always 
+    networks:
+      - app-network
+  ollama:
+    image: ollama/ollama:latest
+    ports:
+      - "11434:11434"
+    volumes:
+      - /home/mehdi/Documents/ollama:/root/.ollama   
+    restart: always
+    networks:
+      - app-network
+networks:
+  app-network: 
+    driver: bridge    

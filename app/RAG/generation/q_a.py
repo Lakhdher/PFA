@@ -12,6 +12,7 @@ from langchain_core.runnables import ConfigurableFieldSpec
 from app.RAG.generation.history import history_aware_retriever
 from app.RAG.utils.prompts import qa_system_prompt
 from app.RAG.utils.utils import async_generator_wrapper
+from app.RAG.utils.parser import streaming_parser
 from app.config.mongoConfig import get_mongo_uri, get_db_name, get_collection_name
 from app.models import gemini
 
@@ -37,7 +38,7 @@ def save_docs(inputs):
     return inputs['context']
 
 
-def parser(input):
+async def parser(input):
     global metadata
     metadata = input.response_metadata
     return input.content
@@ -49,9 +50,8 @@ question_answer_chain = (
             'input': itemgetter('input')})
         | qa_prompt
         | gemini
-        |parser
-
-)
+        | streaming_parser
+        )
 
 rag_chain = create_retrieval_chain(history_aware_retriever, question_answer_chain)
 
@@ -100,8 +100,7 @@ async def get_stream_response(question, user_id, conversation_id):
     answer = []
     global metadata 
     global docs
-    async for text in async_generator_wrapper(
-            conversational_rag_chain.stream({"input": question}, config={"configurable": {"user_id": user_id, "conversation_id": conversation_id}})):
+    async for text in async_generator_wrapper(conversational_rag_chain.stream({"input": question}, config={"configurable": {"user_id": user_id, "conversation_id": conversation_id}})):
         if 'answer' in text:
             answer.append(text['answer'])
             emit('response', {'data': text['answer'], 'metadata': metadata})
