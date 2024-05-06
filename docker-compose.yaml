@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   chatbot:
-    build: .
+    image: mehdixlabetix/chatbot-backend:latest
     ports:
       - "5000:5000"
     links:
@@ -24,11 +24,9 @@ services:
     networks:
       - app-network
   ollama:
-    image: ollama/ollama:latest
+    image: mehdixlabetix/mistral-ollama:latest
     ports:
-      - "11434:11434"
-    volumes:
-      - /home/mehdi/Documents/ollama:/root/.ollama   
+      - "11434:11434"  
     restart: always
     networks:
       - app-network
