@@ -9,3 +9,7 @@ Markdown~=3.5.2
 pymongo~=4.6.3
 asyncio~=3.4.3
 langchain-mongodb
+torch==2.2.2
+sentence-transformers
+chromadb
+flask_cors
