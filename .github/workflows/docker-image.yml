@@ -8,9 +8,12 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest  # Or another runner with Docker installed
+    runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        
       - name: Build & push Docker image
         uses: mr-smithers-excellent/docker-build-push@v6
         with:
