@@ -11,13 +11,6 @@ jobs:
     runs-on: ubuntu-latest  # Or another runner with Docker installed
 
     steps:
-      - uses: actions/checkout@v3  # Latest recommended version
-
-      - name: Set up Docker Hub credentials
-        if: ${{ secrets.DOCKERHUB_USERNAME && secrets.DOCKERHUB_TOKEN }}  # Check for login credentials
-        run: echo "DOCKERHUB_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}" >> $GITHUB_ENV
-             echo "DOCKERHUB_TOKEN=${{ secrets.DOCKERHUB_TOKEN }}" >> $GITHUB_ENV
-
       - name: Login to Docker Hub (if pushing)
         if: ${{ env.DOCKERHUB_USERNAME }}  # Optional: Check for login credentials
         uses: docker/login-action@v2
