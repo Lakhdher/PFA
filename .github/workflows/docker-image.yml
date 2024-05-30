@@ -11,16 +11,6 @@ jobs:
     runs-on: ubuntu-latest  # Or another runner with Docker installed
 
     steps:
-      - uses: actions/checkout@v3  # Latest recommended version
-
-      - name: Check for Docker Hub credentials
-        id: check_secrets
-        run: |
-          if [ -z "${{ secrets.DOCKERHUB_USERNAME }}" ] || [ -z "${{ secrets.DOCKERHUB_TOKEN }}" ]; then
-            echo "credentials_present=false" >> $GITHUB_ENV
-          else
-            echo "credentials_present=true" >> $GITHUB_ENV
-
       - name: Build & push Docker image
         if: env.credentials_present == 'true'
         uses: mr-smithers-excellent/docker-build-push@v6
