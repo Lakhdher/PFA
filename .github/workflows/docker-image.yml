@@ -13,23 +13,27 @@ jobs:
     steps:
       - uses: actions/checkout@v3  # Latest recommended version
 
-      - name: Set up Docker Hub credentials
-        if: ${{ secrets.DOCKERHUB_USERNAME && secrets.DOCKERHUB_TOKEN }}  # Check for login credentials
-        run: echo "DOCKERHUB_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}" >> $GITHUB_ENV
-             echo "DOCKERHUB_TOKEN=${{ secrets.DOCKERHUB_TOKEN }}" >> $GITHUB_ENV
+      - name: Check for Docker Hub credentials
+        id: check_secrets
+        run: |
+          if [ -z "${{ secrets.DOCKERHUB_USERNAME }}" ] || [ -z "${{ secrets.DOCKERHUB_TOKEN }}" ]; then
+            echo "credentials_present=false" >> $GITHUB_ENV
+          else
+            echo "credentials_present=true" >> $GITHUB_ENV
+          fi
 
       - name: Login to Docker Hub (if pushing)
-        if: ${{ env.DOCKERHUB_USERNAME }}  # Optional: Check for login credentials
+        if: env.credentials_present == 'true'
         uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build the Docker image
-        run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/chatbot-backend:latest .  # Use dynamic version tag or your preferred naming convention
+        run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/chatbot-backend:latest .
 
       - name: Push the Docker image (if pushing)
-        if: ${{ env.DOCKERHUB_USERNAME }}  # Optional: Only push if credentials are available
+        if: env.credentials_present == 'true'
         uses: docker/push-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
