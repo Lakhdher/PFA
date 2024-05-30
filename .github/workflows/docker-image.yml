@@ -21,4 +21,4 @@ jobs:
           image: mehdixlabetix/chatbot-backend
           registry: docker.io
           username: mehdixlabetix
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
