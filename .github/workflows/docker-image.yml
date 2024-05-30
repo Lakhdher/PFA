@@ -10,23 +10,11 @@ jobs:
   build:
     runs-on: ubuntu-latest  # Or another runner with Docker installed
 
-    steps:
-      - uses: actions/checkout@v3  # Latest recommended version
-      - name: Login to Docker Hub (if pushing)
-        if: ${{ secrets.DOCKERHUB_USERNAME }}  # Optional: Check for login credentials
-        uses: docker/login-action@v2
+    steps:       
+      - name: Push to Docker
+        uses: mr-smithers-excellent/docker-build-push@v6
         with:
+          image: mehdixlabetix/chatbot-backend
+          registry: docker.io
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-      - name: Build the Docker image
-        run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/chatbot-backend:latest .  # Use dynamic version tag or your preferred naming convention
-
-      - name: Push the Docker image (if pushing)
-        if: ${{ secrets.DOCKERHUB_USERNAME }}  # Optional: Only push if credentials are available
-        uses: docker/push-action@v3
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-          repository: ${{ secrets.DOCKERHUB_USERNAME }}/chatbot-backend:latest
-
