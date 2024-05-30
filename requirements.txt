@@ -13,3 +13,4 @@ torch==2.2.2
 sentence-transformers
 chromadb
 flask_cors
+langchain_pinecone
