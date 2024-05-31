@@ -16,4 +16,4 @@ gemini = ChatGoogleGenerativeAI(model="gemini-1.5-pro-latest", google_api_key=os
 gemini_1 = ChatGoogleGenerativeAI(model="gemini-1.0-pro-latest", google_api_key=os.getenv("GOOGLE_API_KEY"))
 mistral = Ollama(model="mistral" ,base_url='http://ollama:11434')
 vectordb = PineconeVectorStore(index_name=os.getenv("INDEX_NAME"), embedding=embedder)
-retriever = vectordb.as_retriever(kwargs={"k": 5})
+retriever = vectordb.as_retriever()
