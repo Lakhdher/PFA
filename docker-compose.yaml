@@ -27,6 +27,7 @@ services:
       - LANGCHAIN_API_KEY = ${LANGCHAIN_API_KEY}
       - LANGCHAIN_PROJECT = ${LANGCHAIN_PROJECT}
       - GROQ_API_KEY = ${GROQ_API_KEY} 
+      - CLERK_PUBLIC_KEY = ${CLERK_PUBLIC_KEY}
     restart: always
     networks:
       - app-network

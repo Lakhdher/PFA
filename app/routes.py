@@ -1,10 +1,15 @@
+import os
 import asyncio
-
+import jwt
 from flask import request ,abort
+from dotenv import load_dotenv
+
 
 from app import app, socketio
 from app.RAG.generation.q_a import get_response, get_stream_response
 from app.config.mongoConfig import  get_db, get_collection_name
+
+load_dotenv()
 
 @socketio.on('connect')
 def handle_connect():
@@ -65,17 +70,22 @@ def get_user_history():
 @app.route('/delete_history', methods=['DELETE'])
 def delete_history():
     auth_token = request.headers.get('authorization')
+    token_user_id = None
     if not auth_token:
-        abort(403)  # Forbidden
-
+        abort(403)  
     data = request.get_json()
+    auth_token = auth_token.split(' ')[1]
+    try:
+        decoded = jwt.decode(auth_token, key=os.getenv('CLERK_PUBLIC_KEY'), algorithms=['RS256'])
+        if 'sub' in decoded:
+            token_user_id = decoded['sub']
+    except Exception as e:
+        print('Decoding jwt failed:', str(e))
     conversation_id = data['conversation_id']
     user_id = data['user_id']
-
-    # Check if the user_id associated with the auth_token matches the user_id in the request
-    if not user_id == auth_token:
-        abort(403)  # Forbidden
-
+    print(user_id, token_user_id)
+    if not user_id == token_user_id:
+        abort(403)  
     db = get_db()
     collection = db[get_collection_name()]
     query = {'SessionId':  [user_id, conversation_id]}

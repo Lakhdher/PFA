@@ -3,7 +3,7 @@ from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 
 from app.RAG.retrieval.multiquery import retrieval_chain_multiquery
 from app.RAG.utils.prompts import contextualize_q_system_prompt
-from app.models import gemini,retriever,mistral
+from app.models import mistral
 
 contextualize_q_prompt = ChatPromptTemplate.from_messages(
     [
