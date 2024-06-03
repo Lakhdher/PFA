@@ -32,14 +32,9 @@ qa_prompt = ChatPromptTemplate.from_messages(
 )
 
 
-def save_docs(inputs):
-    global docs
-    docs = [x.metadata for x in inputs['context']]
-    return inputs['context']
-
 question_answer_chain = (
         RunnableParallel({
-            'context': RunnableLambda(save_docs),
+            'context': itemgetter('context'),
             'chat_history': itemgetter('chat_history'),
             'input': itemgetter('input')})
         | qa_prompt
