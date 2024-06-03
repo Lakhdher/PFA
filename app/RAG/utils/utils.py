@@ -1,7 +1,3 @@
-import textwrap
-
-import markdown
-from IPython.display import Markdown
 from langchain.load import dumps, loads
 
 
@@ -34,13 +30,3 @@ def format_docs(docs):
 async def async_generator_wrapper(sync_gen):
     for item in sync_gen:
         yield item
-
-
-def to_markdown(text):
-    text = text.replace('•', '  *')
-    return Markdown(textwrap.indent(text, '> ', predicate=lambda _: True))
-
-
-def markdown_to_html(md_text):
-    html = markdown.markdown(md_text)
-    return html
