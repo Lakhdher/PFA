@@ -18,7 +18,7 @@ def get_mongo_uri():
     host = os.getenv('HOST')
     port = os.getenv('PORT')
     db = os.getenv('DB_NAME')
-    return f'mongodb://mongo:{port}/{db}'
+    return f'mongodb://{host}:{port}/{db}'
 
 def get_db_name():
     return os.getenv('DB_NAME')
